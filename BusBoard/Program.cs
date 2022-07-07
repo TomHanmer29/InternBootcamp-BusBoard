@@ -13,13 +13,20 @@ namespace BusBoard
             Console.WriteLine("Welcome to BusBoard!");
             while (true)
             {
-                PrintBusData(RetrieveData<StopData>("https://transportapi.com/v3/uk/bus/stop/" + BusStopEntry() + "/live.json?&app_id="+appId+"&app_key="+appKey+"&group=no&limit=5").Result);
+                LatData postcodeData = RetrieveData<LatData>("https://api.postcodes.io/postcodes/" + PostcodeEntry()).Result;
+                List<BusStopInfo> busStopList = RetrieveData<BusStopData>("https://transportapi.com/v3/uk/places.json?&app_id="+appId+"&app_key="+appKey+"&lat="+postcodeData.result.latitude+"&lon="+postcodeData.result.longitude+"&type=bus_stop").Result.member;
+                busStopList = busStopList.OrderBy(o => o.distance).Take(2).ToList();
+                foreach (var busStop in busStopList)
+                {
+                    Console.WriteLine(busStop.name);
+                    PrintBusData(RetrieveData<StopData>("https://transportapi.com/v3/uk/bus/stop/" +busStop.atcocode+ "/live.json?&app_id="+appId+"&app_key="+appKey+"&group=no&limit=5").Result);
+                }
             }
         }
 
-        private static string BusStopEntry()
+        private static string PostcodeEntry()
         {
-            Console.WriteLine("Enter bus stop code:");
+            Console.WriteLine("Enter your postcode:");
             return Console.ReadLine();
         }
 
@@ -39,7 +46,7 @@ namespace BusBoard
 
         private static void PrintBusData(StopData stopResult)
         {
-            if (stopResult != null)
+            if (stopResult != null && stopResult.departures.ContainsKey("all"))
             {
                 foreach (var bus in stopResult.departures["all"])
                 {
