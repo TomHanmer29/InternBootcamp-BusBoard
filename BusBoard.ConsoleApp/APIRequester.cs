@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BusBoard;
+namespace BusBoard.ConsoleApp;
 
 public class APIRequester
 {
