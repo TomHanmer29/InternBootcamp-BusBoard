@@ -2,10 +2,17 @@
 
 namespace BusBoard;
 
-public class StopData
+public class BusStop
 {
     public string name;
     public Dictionary<string, List<BusData>> departures;
+    public string atcocode;
+    public double distance;
+}
+
+public class BusStopData
+{
+    public List<BusStop> member;
 }
 
 public class BusData

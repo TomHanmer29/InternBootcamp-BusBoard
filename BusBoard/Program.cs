@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-namespace BusBoard
+﻿namespace BusBoard
 {
     class Program
     {
@@ -16,12 +13,11 @@ namespace BusBoard
             while (true)
             {
                 PostcodeData postcodeData = apiRequester.RequestAndDeserialize<PostcodeData>("https://api.postcodes.io/postcodes/" + PostcodeEntry()).Result;
-                List<BusStopInfo> busStopList = apiRequester.RequestAndDeserialize<BusStopData>("https://transportapi.com/v3/uk/places.json?&app_id="+appId+"&app_key="+appKey+"&lat="+postcodeData.result.latitude+"&lon="+postcodeData.result.longitude+"&type=bus_stop").Result.member;
-                busStopList = busStopList.OrderBy(o => o.distance).Take(2).ToList();
+                var busStopList = GetBusStopsFromPostcode(postcodeData);
                 foreach (var busStop in busStopList)
                 {
                     Console.WriteLine(busStop.name);
-                    PrintBusData(apiRequester.RequestAndDeserialize<StopData>("https://transportapi.com/v3/uk/bus/stop/" +busStop.atcocode+ "/live.json?&app_id="+appId+"&app_key="+appKey+"&group=no&limit=5").Result);
+                    PrintBusData(apiRequester.RequestAndDeserialize<BusStop>("https://transportapi.com/v3/uk/bus/stop/" +busStop.atcocode+ "/live.json?&app_id="+appId+"&app_key="+appKey+"&group=no&limit=5").Result);
                 }
             }
         }
@@ -32,19 +28,32 @@ namespace BusBoard
             return Console.ReadLine();
         }
 
-        private static void PrintBusData(StopData stopResult)
+        private static List<BusStop> GetBusStopsFromPostcode(PostcodeData postcodeData)
         {
-            if (stopResult != null && stopResult.departures.ContainsKey("all"))
+            List<BusStop> busStopList = apiRequester.RequestAndDeserialize<BusStopData>(
+                    "https://transportapi.com/v3/uk/places.json?&app_id=" + appId +
+                    "&app_key=" + appKey +
+                    "&lat=" + postcodeData.result.latitude +
+                    "&lon=" + postcodeData.result.longitude +
+                    "&type=bus_stop")
+                .Result.member;
+            return busStopList.OrderBy(o => o.distance).Take(2).ToList();
+        }
+
+        private static void PrintBusData(BusStop busStopResult)
+        {
+            if (busStopResult != null && busStopResult.departures.ContainsKey("all"))
             {
-                foreach (var bus in stopResult.departures["all"])
+                foreach (var bus in busStopResult.departures["all"])
                 {
-                    var busRoute = new BusRoute();
-                    string routeString = "";
+                    var routeString = "";
                     if (bus.id != null)
                     {
-                        busRoute = apiRequester.RequestAndDeserialize<BusRoute>(bus.id).Result;
+                        // Get route info for this bus
+                        var busRoute = apiRequester.RequestAndDeserialize<BusRoute>(bus.id).Result;
                         routeString = string.Join(" -> ", busRoute.stops.Select(x => x.name));
                     }
+                    // Display all information for this bus from this stop
                     Console.WriteLine(
                         $"Line: {bus.line}, Destination: {bus.direction}, Time: {bus.aimed_departure_time}, Expected: {bus.expected_departure_time}, Route: {routeString}");
                 }
