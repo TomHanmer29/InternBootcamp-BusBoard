@@ -7,19 +7,21 @@ namespace BusBoard
     {
         const string appId = "a5babc51";
         private const string appKey = "f057beb130e643c45171f1ae19b3e4fd";
-        static HttpClient client = new HttpClient();
+        private static APIRequester apiRequester = new APIRequester();
+        
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to BusBoard!");
+            
             while (true)
             {
-                LatData postcodeData = RetrieveData<LatData>("https://api.postcodes.io/postcodes/" + PostcodeEntry()).Result;
-                List<BusStopInfo> busStopList = RetrieveData<BusStopData>("https://transportapi.com/v3/uk/places.json?&app_id="+appId+"&app_key="+appKey+"&lat="+postcodeData.result.latitude+"&lon="+postcodeData.result.longitude+"&type=bus_stop").Result.member;
+                PostcodeData postcodeData = apiRequester.RequestAndDeserialize<PostcodeData>("https://api.postcodes.io/postcodes/" + PostcodeEntry()).Result;
+                List<BusStopInfo> busStopList = apiRequester.RequestAndDeserialize<BusStopData>("https://transportapi.com/v3/uk/places.json?&app_id="+appId+"&app_key="+appKey+"&lat="+postcodeData.result.latitude+"&lon="+postcodeData.result.longitude+"&type=bus_stop").Result.member;
                 busStopList = busStopList.OrderBy(o => o.distance).Take(2).ToList();
                 foreach (var busStop in busStopList)
                 {
                     Console.WriteLine(busStop.name);
-                    PrintBusData(RetrieveData<StopData>("https://transportapi.com/v3/uk/bus/stop/" +busStop.atcocode+ "/live.json?&app_id="+appId+"&app_key="+appKey+"&group=no&limit=5").Result);
+                    PrintBusData(apiRequester.RequestAndDeserialize<StopData>("https://transportapi.com/v3/uk/bus/stop/" +busStop.atcocode+ "/live.json?&app_id="+appId+"&app_key="+appKey+"&group=no&limit=5").Result);
                 }
             }
         }
@@ -28,20 +30,6 @@ namespace BusBoard
         {
             Console.WriteLine("Enter your postcode:");
             return Console.ReadLine();
-        }
-
-        private static async Task<dataType> RetrieveData<dataType>(string address)
-        {
-            string result="";
-            try
-            {
-                result = await client.GetStringAsync(address);
-            }
-            catch(HttpRequestException)
-            {
-                Console.WriteLine("You've entered an invalid input");
-            }
-            return JsonConvert.DeserializeObject<dataType>(result);
         }
 
         private static void PrintBusData(StopData stopResult)
@@ -54,7 +42,7 @@ namespace BusBoard
                     string routeString = "";
                     if (bus.id != null)
                     {
-                        busRoute = RetrieveData<BusRoute>(bus.id).Result;
+                        busRoute = apiRequester.RequestAndDeserialize<BusRoute>(bus.id).Result;
                         routeString = string.Join(" -> ", busRoute.stops.Select(x => x.name));
                     }
                     Console.WriteLine(

@@ -1,11 +1,11 @@
 ﻿namespace BusBoard;
 
-public class LatData
+public class PostcodeData
 {
-    public LatResult result;
+    public PostcodeResult result;
 }
 
-public class LatResult
+public class PostcodeResult
 {
     public string longitude;
     public string latitude;
