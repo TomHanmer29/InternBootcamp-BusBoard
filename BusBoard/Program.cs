@@ -5,12 +5,15 @@ namespace BusBoard
 {
     class Program
     {
+        const string appId = "a5babc51";
+        private const string appKey = "f057beb130e643c45171f1ae19b3e4fd";
+        static HttpClient client = new HttpClient();
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to BusBoard!");
             while (true)
             {
-                PrintBusData(RetrieveBusData().Result);
+                PrintBusData(RetrieveData<StopData>("https://transportapi.com/v3/uk/bus/stop/" + BusStopEntry() + "/live.json?&app_id="+appId+"&app_key="+appKey+"&group=no&limit=5").Result);
             }
         }
 
@@ -20,19 +23,18 @@ namespace BusBoard
             return Console.ReadLine();
         }
 
-        private static async Task<StopData> RetrieveBusData()
+        private static async Task<dataType> RetrieveData<dataType>(string address)
         {
-            HttpClient client = new HttpClient();
             string result="";
             try
             {
-                result = await client.GetStringAsync("https://transportapi.com/v3/uk/bus/stop/" + BusStopEntry() + "/live.json?&app_id=a5babc51&app_key=f057beb130e643c45171f1ae19b3e4fd&group=no&limit=5");
+                result = await client.GetStringAsync(address);
             }
             catch(HttpRequestException)
             {
-                Console.WriteLine("You've entered an invalid stop");
+                Console.WriteLine("You've entered an invalid input");
             }
-            return JsonConvert.DeserializeObject<StopData>(result);
+            return JsonConvert.DeserializeObject<dataType>(result);
         }
 
         private static void PrintBusData(StopData stopResult)
@@ -41,8 +43,15 @@ namespace BusBoard
             {
                 foreach (var bus in stopResult.departures["all"])
                 {
+                    var busRoute = new BusRoute();
+                    string routeString = "";
+                    if (bus.id != null)
+                    {
+                        busRoute = RetrieveData<BusRoute>(bus.id).Result;
+                        routeString = string.Join(" -> ", busRoute.stops.Select(x => x.name));
+                    }
                     Console.WriteLine(
-                        $"Line: {bus.line}, Destination: {bus.direction}, Time: {bus.aimed_departure_time}, Expected: {bus.expected_departure_time}");
+                        $"Line: {bus.line}, Destination: {bus.direction}, Time: {bus.aimed_departure_time}, Expected: {bus.expected_departure_time}, Route: {routeString}");
                 }
             }
             else
@@ -52,3 +61,5 @@ namespace BusBoard
         }
     }
 }
+
+//0500CCITY436

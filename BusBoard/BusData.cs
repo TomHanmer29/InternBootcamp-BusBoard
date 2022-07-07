@@ -14,4 +14,15 @@ public class BusData
     public string direction;
     public string aimed_departure_time;
     public string expected_departure_time;
+    public string id;
+}
+
+public class BusRoute
+{
+    public List<RouteStop> stops;
+}
+
+public class RouteStop
+{
+    public string name;
 }
