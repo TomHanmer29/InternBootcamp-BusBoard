@@ -7,7 +7,11 @@ namespace BusBoard
     {
         static void Main(string[] args)
         {
-            PrintBusData(RetrieveBusData().Result);
+            Console.WriteLine("Welcome to BusBoard!");
+            while (true)
+            {
+                PrintBusData(RetrieveBusData().Result);
+            }
         }
 
         private static string BusStopEntry()
@@ -19,8 +23,15 @@ namespace BusBoard
         private static async Task<StopData> RetrieveBusData()
         {
             HttpClient client = new HttpClient();
-            Console.WriteLine("Welcome to BusBoard!");
-            var result = await client.GetStringAsync("https://transportapi.com/v3/uk/bus/stop/"+BusStopEntry()+"/live.json?&app_id=a5babc51&app_key=f057beb130e643c45171f1ae19b3e4fd&group=no&limit=5");
+            string result="";
+            try
+            {
+                result = await client.GetStringAsync("https://transportapi.com/v3/uk/bus/stop/" + BusStopEntry() + "/live.json?&app_id=a5babc51&app_key=f057beb130e643c45171f1ae19b3e4fd&group=no&limit=5");
+            }
+            catch(HttpRequestException)
+            {
+                Console.WriteLine("You've entered an invalid stop");
+            }
             return JsonConvert.DeserializeObject<StopData>(result);
         }
 
@@ -36,7 +47,7 @@ namespace BusBoard
             }
             else
             {
-                Console.WriteLine("Invalid input :(");
+                Console.WriteLine(":(");
             }
         }
     }
