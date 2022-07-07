@@ -6,7 +6,7 @@ public class APIRequester
 {
     HttpClient client = new HttpClient();
 
-    public async Task<dataType> RequestAndDeserialize<dataType>(string address)
+    private async Task<string> Request(string address)
     {
         string result="";
         try
@@ -17,11 +17,27 @@ public class APIRequester
         {
             Console.WriteLine("You've entered an invalid input");
         }
-        var deserialized = JsonConvert.DeserializeObject<dataType>(result);
+
+        return result;
+    }
+
+    private dataType Deserialize<dataType>(string input)
+    {
+        var deserialized = JsonConvert.DeserializeObject<dataType>(input);
         if (deserialized != null)
         {
             return deserialized;
         }
         throw new JsonException("Failed to deserialize JSON object.");
+    }
+
+    public dataType RequestAndDeserialize<dataType>(string address) where dataType : new()
+    {
+        var result = Request(address).Result;
+        if (result == "")
+        {
+            return new dataType();
+        }
+        return Deserialize<dataType>(result);
     }
 }

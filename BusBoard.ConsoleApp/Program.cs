@@ -7,7 +7,6 @@
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to BusBoard!");
-            
             while (true)
             {
                 PostcodeData postcodeData = busBoard.PerformPostcodeLookup(PostcodeEntry());
@@ -28,8 +27,14 @@
 
         private static string PostcodeEntry()
         {
-            Console.WriteLine("\nEnter your postcode:");
-            return Console.ReadLine();
+            string postcode;
+            do
+            {
+                Console.WriteLine("\nEnter your postcode:");
+                postcode = Console.ReadLine();
+            } while (!busBoard.ValidatePostcode(postcode));
+            return postcode;
+
         }
 
         private static void PrintBusRoute(List<string> route)
