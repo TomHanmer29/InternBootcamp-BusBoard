@@ -20,23 +20,27 @@
                 <h2>@stop.name</h2>
                 <table class="table">
                   <thead>
-                    <tr>
-                      <th scope="col">Line</th>
-                      <th scope="col">Destination</th>
-                      <th scope="col">Time</th>
-                      <th scope="col">Expected</th>
-                      <th scope="col">Route</th>
+                    <tr class="d-flex">
+                      <th scope="col" class = "col-1">Line</th>
+                      <th scope="col" class = "col-4">Destination</th>
+                      <th scope="col" class = "col-1">Time</th>
+                      <th scope="col" class = "col-1">Expected</th>
+                      <th scope="col" class = "col-5">Route</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="table-group-divider">
                   @foreach (var bus in busList)
                   {
-                      <tr>
-                          <th scope="row">@bus.line</th>
-                          <td>@bus.direction</td>
-                          <td>@bus.aimed_departure_time</td>
-                          <td>@bus.expected_departure_time</td>
-                          <td><marquee>@Model.GetRoute(bus)</marquee></td>
+                      <tr class="d-flex @((bus.aimed_departure_time!=bus.expected_departure_time && bus.expected_departure_time!=null) ? "table-danger" : "")">
+                          <th scope="row" class = "col-1">@bus.line</th>
+                          <td class = "col-4">@bus.direction</td>
+                          <td class = "col-1">@bus.aimed_departure_time</td>
+                          <td class = "col-1">@bus.expected_departure_time</td>
+                          <td class="col-5">
+                              <div class="marquee">
+                                  <p>@Model.GetRoute(bus)</p>
+                              </div>
+                          </td>
                       </tr>
                   }
                   </tbody>

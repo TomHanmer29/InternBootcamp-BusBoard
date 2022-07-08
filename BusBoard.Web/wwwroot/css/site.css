@@ -16,3 +16,19 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.marquee {
+  overflow: hidden;
+}
+
+.marquee *
+{
+  animation: marquee 15s linear 3s infinite;
+  white-space: nowrap;
+    
+}
+
+@keyframes marquee {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
