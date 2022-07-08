@@ -4,8 +4,8 @@ namespace BusBoard.Api;
 
 public class BusBoard
 {
-    const string appId = "a5babc51";
-    private const string appKey = "f057beb130e643c45171f1ae19b3e4fd";
+    const string appId = "4cc50d0f";
+    private const string appKey = "0f096d67c0b8ca6ae264fd10d28a4697";
     private static APIRequester apiRequester = new APIRequester();
 
     public PostcodeData PerformPostcodeLookup(string postcode)
