@@ -4,7 +4,7 @@
   ViewBag.Title = "Bus Information";
 }
 
-<h1>Bussin'Info</h1>
+<h1>Bussin'Info</h1 >
 
 <div class="row">
     <p>You entered postcode @Model.PostCode</p>
@@ -55,3 +55,17 @@
     }
     
 </div>
+<script>
+    window.onload = setTimeout(DoEveryThirty,30000);
+    async function DoEveryThirty(){
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var postcode = urlParams.get('Postcode');
+        await fetch(location.origin + "/Home/BusInfo?Postcode="+postcode).then(data => {return data.text()}).then(body => {
+            document.open();
+            document.write(body);
+            document.close();
+        })
+        console.log("I'm doing something!");
+    }
+</script>
