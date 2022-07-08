@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BusBoard.ConsoleApp;
+namespace BusBoard.Api;
 
 public class APIRequester
 {
@@ -31,7 +31,7 @@ public class APIRequester
         throw new JsonException("Failed to deserialize JSON object.");
     }
 
-    public dataType RequestAndDeserialize<dataType>(string address) where dataType : new()
+    public dataType MakeAPIRequest<dataType>(string address) where dataType : new()
     {
         var result = Request(address).Result;
         if (result == "")

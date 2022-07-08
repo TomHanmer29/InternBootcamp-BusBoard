@@ -1,8 +1,10 @@
-﻿namespace BusBoard.ConsoleApp
+﻿using BusBoard.Api;
+
+namespace BusBoard.ConsoleApp
 {
     class Program
     {
-        static BusBoard busBoard = new BusBoard();
+        static Api.BusBoard busBoard = new Api.BusBoard();
         
         static void Main(string[] args)
         {

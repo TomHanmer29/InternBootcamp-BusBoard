@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace BusBoard.ConsoleApp;
+namespace BusBoard.Api;
 
 public class BusBoard
 {
@@ -10,12 +10,12 @@ public class BusBoard
 
     public PostcodeData PerformPostcodeLookup(string postcode)
     {
-        return apiRequester.RequestAndDeserialize<PostcodeData>("https://api.postcodes.io/postcodes/" + postcode);
+        return apiRequester.MakeAPIRequest<PostcodeData>("https://api.postcodes.io/postcodes/" + postcode);
     }
     
     public List<BusStop> GetBusStopsFromPostcode(PostcodeData postcodeData, int numberOfStops)
     {
-        var busStopResult = apiRequester.RequestAndDeserialize<BusStopData>(
+        var busStopResult = apiRequester.MakeAPIRequest<BusStopData>(
             "https://transportapi.com/v3/uk/places.json?&app_id=" + appId +
             "&app_key=" + appKey +
             "&lat=" + postcodeData.result.latitude +
@@ -31,7 +31,7 @@ public class BusBoard
 
     public List<BusData> GetDeparturesAtStop(BusStop busStop)
     {
-        BusStop busStopResult = apiRequester.RequestAndDeserialize<BusStop>("https://transportapi.com/v3/uk/bus/stop/" +
+        BusStop busStopResult = apiRequester.MakeAPIRequest<BusStop>("https://transportapi.com/v3/uk/bus/stop/" +
                                                            busStop.atcocode + "/live.json?&app_id=" + appId +
                                                            "&app_key=" + appKey + "&group=no&limit=5");
         if (busStopResult != null && busStopResult.departures.ContainsKey("all"))
@@ -45,7 +45,7 @@ public class BusBoard
     public List<string> GetRoute(BusData bus)
     {
         // Get route info for this bus
-        var busRoute = apiRequester.RequestAndDeserialize<BusRoute>(bus.id);
+        var busRoute = apiRequester.MakeAPIRequest<BusRoute>(bus.id);
         if (busRoute.stops == null)
         {
             return new List<string>();
@@ -55,8 +55,7 @@ public class BusBoard
 
     public bool ValidatePostcode(string postcode)
     {
-        //fix this, need to deserialise the api request properly
-        PostcodeValidation valid = apiRequester.RequestAndDeserialize<PostcodeValidation>("https://api.postcodes.io/postcodes/" + postcode +"/validate");
+        PostcodeValidation valid = apiRequester.MakeAPIRequest<PostcodeValidation>("https://api.postcodes.io/postcodes/" + postcode +"/validate");
         if(valid.result == false)
         {
             Console.WriteLine("Invalid postcode.");

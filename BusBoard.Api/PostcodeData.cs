@@ -1,4 +1,4 @@
-﻿namespace BusBoard;
+﻿namespace BusBoard.Api;
 
 public class PostcodeData
 {

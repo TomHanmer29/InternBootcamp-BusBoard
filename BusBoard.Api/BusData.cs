@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace BusBoard;
+namespace BusBoard.Api;
 
 public class BusStop
 {
