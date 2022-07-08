@@ -31,7 +31,18 @@ namespace BusBoard.Web.ViewModels
         public string GetRoute(BusData bus)
         {
             var routeList = busBoard.GetRoute(bus);
-            return string.Join(" -> ", routeList);
+            return string.Join(" → ", routeList);
+        }
+
+        public Dictionary<BusData, string> findMaxRouteLength(List<BusData> busList)
+        {
+            Dictionary<BusData, string> busAndRoute = new Dictionary<BusData, string>();
+            foreach (var bus in busList)
+            {
+                busAndRoute.Add(bus, GetRoute(bus));
+            }
+
+            return busAndRoute;
         }
 
     }

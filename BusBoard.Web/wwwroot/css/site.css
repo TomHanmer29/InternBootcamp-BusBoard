@@ -23,14 +23,13 @@ body {
 
 .marquee *
 {
-  animation: marquee 18s linear infinite;
   white-space: nowrap;
-    
+  width: fit-content
 }
 
 @keyframes marquee {
   0%   { transform: translate(0, 0); }
   15%  { transform: translate(0, 0); }
-  100% { transform: translate(-230%, 0); }
+  100% { transform: translate(var(--percentage), 0); }
   
 }

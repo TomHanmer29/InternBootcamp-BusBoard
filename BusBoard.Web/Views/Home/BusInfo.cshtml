@@ -1,4 +1,5 @@
-﻿@model BusBoard.Web.ViewModels.BusInfo
+﻿@using BusBoard.Api
+@model global::BusBoard.Web.ViewModels.BusInfo
 @{
   ViewBag.Title = "Bus Information";
 }
@@ -18,7 +19,7 @@
             var busList = Model.GetDeparturesAtStop(stop);
             <div>
                 <h2>@stop.name</h2>
-                <table class="table">
+                <table class="table" style="table-layout: fixed">
                   <thead>
                     <tr class="d-flex">
                       <th scope="col" class = "col-1">Line</th>
@@ -29,16 +30,20 @@
                     </tr>
                   </thead>
                   <tbody class="table-group-divider">
+                  @{Dictionary<BusData, string> dictionary = Model.findMaxRouteLength(busList);}
+                  @{ double longestLength = dictionary.Values.Select(o => o.Length).Max();}
                   @foreach (var bus in busList)
                   {
-                      <tr class="d-flex @((bus.aimed_departure_time!=bus.expected_departure_time && bus.expected_departure_time!=null) ? "table-danger" : "")">
-                          <th scope="row" class = "col-1">@bus.line</th>
-                          <td class = "col-4">@bus.direction</td>
-                          <td class = "col-1">@bus.aimed_departure_time</td>
-                          <td class = "col-1">@bus.expected_departure_time</td>
+                      double dynamicPercentage = -105 * longestLength / dictionary[bus].Length;
+                      var routeString = dictionary[bus];
+                      <tr class="d-flex @((bus.aimed_departure_time != bus.expected_departure_time && bus.expected_departure_time != null) ? "table-danger" : "")">
+                          <th scope="row" class="col-1">@bus.line</th>
+                          <td class="col-4">@bus.direction</td>
+                          <td class="col-1">@bus.aimed_departure_time</td>
+                          <td class="col-1">@bus.expected_departure_time</td>
                           <td class="col-5">
-                              <div class="marquee">
-                                  <p>@Model.GetRoute(bus)</p>
+                              <div class="marquee" style="--percentage:@(dynamicPercentage)%">
+                                  <p style="animation: marquee @(longestLength/7)s linear infinite;">@routeString</p>
                               </div>
                           </td>
                       </tr>
