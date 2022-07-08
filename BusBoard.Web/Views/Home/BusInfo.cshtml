@@ -3,8 +3,23 @@
   ViewBag.Title = "Bus Information";
 }
 
-<h2>BusInfo</h2>
+<h1>BusInfo</h1>
 
 <div class="row">
     <p>You entered postcode @Model.PostCode</p>
+    @if (!Model.ValidatePostcode())
+    {
+        <p>Invalid postcode</p>
+    }
+    else
+    {
+        foreach (var stop in Model.GetStops())
+        {
+            <div>
+                <h2>@stop.name</h2>
+                <p>Bus timetable goes here</p>
+            </div>
+        }
+    }
+    
 </div>
