@@ -56,8 +56,12 @@ public class BusBoard
     public bool ValidatePostcode(string postcode)
     {
         //fix this, need to deserialise the api request properly
-        //Dictionary<string,JToken> dictionary = apiRequester.RequestAndDeserialize<Dictionary<string,JToken>>("https://api.postcodes.io/postcodes/" + postcode +"validate");
-        Console.WriteLine("Invalid postcode.");
+        PostcodeValidation valid = apiRequester.RequestAndDeserialize<PostcodeValidation>("https://api.postcodes.io/postcodes/" + postcode +"/validate");
+        if(valid.result == false)
+        {
+            Console.WriteLine("Invalid postcode.");
+            return false;
+        }
         return true;
     }
 }

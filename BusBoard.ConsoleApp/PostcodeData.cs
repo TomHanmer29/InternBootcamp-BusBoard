@@ -10,3 +10,8 @@ public class PostcodeResult
     public string longitude;
     public string latitude;
 }
+
+public class PostcodeValidation
+{
+    public bool result;
+}
