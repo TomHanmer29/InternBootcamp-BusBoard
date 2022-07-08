@@ -54,7 +54,7 @@ namespace BusBoard.ConsoleApp
                 // Display all information for this bus from this stop
                 Console.WriteLine("{0,-15}{1,-35}{2,-15}{3,-15}", bus.line, bus.direction, bus.aimed_departure_time,
                     bus.expected_departure_time);
-                //PrintBusRoute(busBoard.GetRoute(bus));
+                PrintBusRoute(busBoard.GetRoute(bus));
             }
         }
     }

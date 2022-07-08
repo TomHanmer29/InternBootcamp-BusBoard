@@ -45,6 +45,10 @@ public class BusBoard
     public List<string> GetRoute(BusData bus)
     {
         // Get route info for this bus
+        if (bus.id == null)
+        {
+            return new List<string>();
+        }
         var busRoute = apiRequester.MakeAPIRequest<BusRoute>(bus.id);
         if (busRoute.stops == null)
         {

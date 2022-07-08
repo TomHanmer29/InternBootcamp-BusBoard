@@ -18,9 +18,20 @@ namespace BusBoard.Web.ViewModels
             return busBoard.ValidatePostcode(PostCode);
         }
 
-        public List<Api.BusStop> GetStops()
+        public List<BusStop> GetStops()
         {
             return busBoard.GetBusStopsFromPostcode(busBoard.PerformPostcodeLookup(PostCode), 2);
+        }
+
+        public List<BusData> GetDeparturesAtStop(BusStop stop)
+        {
+            return busBoard.GetDeparturesAtStop(stop);
+        }
+
+        public string GetRoute(BusData bus)
+        {
+            var routeList = busBoard.GetRoute(bus);
+            return string.Join(" -> ", routeList);
         }
 
     }
