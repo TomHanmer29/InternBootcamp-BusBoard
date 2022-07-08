@@ -29,7 +29,11 @@ body {
 
 @keyframes marquee {
   0%   { transform: translate(0, 0); }
-  15%  { transform: translate(0, 0); }
+  10%  { transform: translate(0, 0); }
   100% { transform: translate(var(--percentage), 0); }
-  
+}
+
+.navbar{
+  background-color: #520dc2;
+  color: white
 }
